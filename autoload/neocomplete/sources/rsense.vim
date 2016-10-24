@@ -46,13 +46,13 @@ let s:source = {
       \ 'hooks' : {},
       \}
 
-function! s:source.hooks.on_init() "{{{
-  " Initialize.
-endfunction"}}}
-
-function! s:source.hooks.on_final(context) "{{{
-  " Finalize
-endfunction"}}}
+" function! s:source.hooks.on_init(context) "{{{
+"   " Initialize.
+" endfunction"}}}
+"
+" function! s:source.hooks.on_final(context) "{{{
+"   " Finalize
+" endfunction"}}}
 
 function! s:source.get_complete_position(context)
   if neocomplete#within_comment()
@@ -130,10 +130,13 @@ endfunction"}}}
 
 function! s:get_rsense_current_buffer_option(filename, cur_keyword_str) "{{{
   let current_line = line('.')
-  let range = neocomplete#get_context_filetype_range()
-  if range[0][0] != 1
-    let current_line -= range[0][0] - 1
-  endif
+  " let filetype = neocomplete#get_context_filetype()
+  " if filetype !== 'nothing'
+  "   let range = context_filetype#get_range()
+  "   if range[0][0] != 1
+  "     let current_line -= range[0][0] - 1
+  "   endif
+  " endif
   return ['--file=' . a:filename,
         \ printf('--location=%s:%s', current_line,
         \     col('.') - (mode() ==# 'n' ? 0 : 1) - len(a:cur_keyword_str))]
@@ -142,10 +145,11 @@ endfunction"}}}
 function! s:get_temp_name(cur_keyword_str) "{{{
   let filename =
         \ neocomplete#util#substitute_path_separator(tempname())
-  let range = neocomplete#get_context_filetype_range()
-  let [start, end] = [range[0][0], range[1][0]]
+  let [start, end] = [0, '$']
+  " let range = neocomplete#get_context_filetype_range()
+  " let [start, end] = [range[0][0], range[1][0]]
 
-  let lines = getline(range[0][0], range[1][0])
+  let lines = getline(start, end)
   let lines[line('.')-start] =
         \ getline('.')[: -1-len(a:cur_keyword_str)]
 
